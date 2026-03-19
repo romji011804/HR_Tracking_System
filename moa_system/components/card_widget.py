@@ -2,9 +2,14 @@
 Card Widget Component
 Reusable card widget with rounded corners, shadow, and icon support
 """
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
+from qt_compat import QtCore, QtGui, QtWidgets
+
+Qt = QtCore.Qt
+QFont = QtGui.QFont
+QWidget = QtWidgets.QWidget
+QVBoxLayout = QtWidgets.QVBoxLayout
+QHBoxLayout = QtWidgets.QHBoxLayout
+QLabel = QtWidgets.QLabel
 
 class CardWidget(QWidget):
     """Reusable card widget for displaying information"""

@@ -2,12 +2,12 @@
 Theme Manager for Light/Dark Mode
 Handles application theme switching
 """
-from PyQt5.QtCore import QObject, pyqtSignal
+from qt_compat import QtCore, Signal
 
-class ThemeManager(QObject):
+class ThemeManager(QtCore.QObject):
     """Manages application themes (Light/Dark)"""
     
-    theme_changed = pyqtSignal(str)  # Emits 'light' or 'dark'
+    theme_changed = Signal(str)  # Emits 'light' or 'dark'
     
     def __init__(self):
         super().__init__()
@@ -59,6 +59,46 @@ class ThemeManager(QObject):
                 Sidebar {
                     background-color: #ffffff;
                     border-right: 1px solid #e5e7eb;
+                }
+                QLabel#SidebarTitle {
+                    color: #0f172a;
+                }
+                QLabel#SidebarSectionLabel {
+                    color: #64748b;
+                }
+                QPushButton[nav="true"] {
+                    background: transparent;
+                    border: none;
+                    border-left: 3px solid transparent;
+                    padding: 10px 12px;
+                    text-align: left;
+                    font-size: 12px;
+                    color: #0f172a;
+                    font-weight: 500;
+                }
+                QPushButton[nav="true"]:hover {
+                    background-color: rgba(79, 70, 229, 0.08);
+                    border-left-color: rgba(79, 70, 229, 0.45);
+                }
+                QPushButton[nav="true"][active="true"] {
+                    background-color: rgba(79, 70, 229, 0.10);
+                    border-left-color: #4f46e5;
+                    color: #4338ca;
+                    font-weight: 600;
+                }
+                QPushButton[themeToggle="true"] {
+                    background-color: #ffffff;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 8px;
+                    padding: 8px 10px;
+                    font-size: 11px;
+                    color: #0f172a;
+                }
+                QPushButton[themeToggle="true"][active="true"] {
+                    background-color: #4f46e5;
+                    border-color: #4f46e5;
+                    color: #ffffff;
+                    font-weight: 600;
                 }
             """,
             'button': """
@@ -156,6 +196,46 @@ class ThemeManager(QObject):
                 Sidebar {
                     background-color: #020617;
                     border-right: 1px solid #1f2937;
+                }
+                QLabel#SidebarTitle {
+                    color: #e5e7eb;
+                }
+                QLabel#SidebarSectionLabel {
+                    color: #94a3b8;
+                }
+                QPushButton[nav="true"] {
+                    background: transparent;
+                    border: none;
+                    border-left: 3px solid transparent;
+                    padding: 10px 12px;
+                    text-align: left;
+                    font-size: 12px;
+                    color: #e5e7eb;
+                    font-weight: 500;
+                }
+                QPushButton[nav="true"]:hover {
+                    background-color: rgba(79, 70, 229, 0.18);
+                    border-left-color: rgba(79, 70, 229, 0.65);
+                }
+                QPushButton[nav="true"][active="true"] {
+                    background-color: rgba(79, 70, 229, 0.20);
+                    border-left-color: #4f46e5;
+                    color: #c7d2fe;
+                    font-weight: 600;
+                }
+                QPushButton[themeToggle="true"] {
+                    background-color: #0b1220;
+                    border: 1px solid #1f2937;
+                    border-radius: 8px;
+                    padding: 8px 10px;
+                    font-size: 11px;
+                    color: #e5e7eb;
+                }
+                QPushButton[themeToggle="true"][active="true"] {
+                    background-color: #4f46e5;
+                    border-color: #4f46e5;
+                    color: #ffffff;
+                    font-weight: 600;
                 }
             """,
             'button': """

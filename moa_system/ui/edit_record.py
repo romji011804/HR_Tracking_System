@@ -2,24 +2,39 @@
 Edit Record Window for MOA Tracking System
 Form for editing existing MOA and Legal Opinion records
 """
-from PyQt5.QtWidgets import (
-    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGroupBox,
-    QLabel, QLineEdit, QDateEdit, QComboBox, QCheckBox, QPushButton,
-    QFileDialog, QMessageBox, QGridLayout, QScrollArea,
-    QDialog
-)
-from PyQt5.QtCore import Qt, QDate, pyqtSignal
-from PyQt5.QtGui import QFont
+from qt_compat import QtCore, QtGui, QtWidgets, Signal
 from database import Database
 from models import Record
 from utils.file_handler import FileHandler
 from utils.file_opener import open_file
 from components.recent_input_widget import RecentInputComboBox
 
+Qt = QtCore.Qt
+QDate = QtCore.QDate
+QFont = QtGui.QFont
+
+QMainWindow = QtWidgets.QMainWindow
+QWidget = QtWidgets.QWidget
+QVBoxLayout = QtWidgets.QVBoxLayout
+QHBoxLayout = QtWidgets.QHBoxLayout
+QGroupBox = QtWidgets.QGroupBox
+QLabel = QtWidgets.QLabel
+QLineEdit = QtWidgets.QLineEdit
+QDateEdit = QtWidgets.QDateEdit
+QComboBox = QtWidgets.QComboBox
+QCheckBox = QtWidgets.QCheckBox
+QPushButton = QtWidgets.QPushButton
+QFileDialog = QtWidgets.QFileDialog
+QMessageBox = QtWidgets.QMessageBox
+QGridLayout = QtWidgets.QGridLayout
+QScrollArea = QtWidgets.QScrollArea
+QDialog = QtWidgets.QDialog
+
+
 class EditRecordWindow(QMainWindow):
     """Window for editing existing records"""
     
-    record_updated = pyqtSignal(int)  # Emit record ID when updated
+    record_updated = Signal(int)  # Emit record ID when updated
     
     def __init__(self, db: Database, record_id: int):
         super().__init__()

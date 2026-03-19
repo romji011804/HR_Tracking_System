@@ -7,12 +7,15 @@ import os
 from datetime import datetime
 from typing import List, Dict, Tuple, Optional
 
-DB_PATH = os.path.join(os.path.dirname(__file__), 'moa_tracking.db')
+from app_paths import get_db_path, migrate_legacy_db_if_needed
+
+DB_PATH = str(get_db_path())
 
 class Database:
     """Database handler for MOA tracking system"""
     
     def __init__(self, db_path: str = DB_PATH):
+        migrate_legacy_db_if_needed()
         self.db_path = db_path
         self.init_db()
     

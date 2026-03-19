@@ -3,14 +3,19 @@ Recent Input Dropdown Widget
 Modern searchable dropdown with recent history and delete button
 Similar to TikTok search bar
 """
-from PyQt5.QtWidgets import (
-    QWidget, QHBoxLayout, QLineEdit, QPushButton, QCompleter, 
-    QComboBox, QListWidget, QListWidgetItem
-)
-from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtGui import QFont
+from qt_compat import QtCore, QtGui, QtWidgets, Signal
 from utils.recent_inputs import RecentInputsManager
 
+Qt = QtCore.Qt
+QFont = QtGui.QFont
+QWidget = QtWidgets.QWidget
+QHBoxLayout = QtWidgets.QHBoxLayout
+QLineEdit = QtWidgets.QLineEdit
+QPushButton = QtWidgets.QPushButton
+QCompleter = QtWidgets.QCompleter
+QComboBox = QtWidgets.QComboBox
+QListWidget = QtWidgets.QListWidget
+QListWidgetItem = QtWidgets.QListWidgetItem
 
 class RecentInputComboBox(QWidget):
     """
@@ -19,7 +24,7 @@ class RecentInputComboBox(QWidget):
     """
     
     # Signal emitted when text changes
-    textChanged = pyqtSignal(str)
+    textChanged = Signal(str)
     
     def __init__(self, field_name: str, parent=None):
         """

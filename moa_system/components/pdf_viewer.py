@@ -2,17 +2,13 @@
 PDF Viewer Dialog Component
 For viewing PDF files within the application
 """
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QMessageBox
-from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QFont
+from qt_compat import QtCore, QtGui, QtWidgets, load_qurl, load_web_engine_view
 
-try:
-    from PyQt5.QtWebEngineWidgets import QWebEngineView
-    HAS_WEB_ENGINE = True
-except ImportError:
-    HAS_WEB_ENGINE = False
+Qt = QtCore.Qt
+QUrl = load_qurl()
+HAS_WEB_ENGINE, _QWebEngineView = load_web_engine_view()
 
-class PDFViewer(QDialog):
+class PDFViewer(QtWidgets.QDialog):
     """Dialog for viewing PDF files"""
     
     def __init__(self, file_path: str, title: str = "PDF Viewer", parent=None):
@@ -26,23 +22,23 @@ class PDFViewer(QDialog):
         self.setWindowTitle(title)
         self.setGeometry(100, 100, 900, 700)
         
-        layout = QVBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
         
         # Toolbar
-        toolbar = QHBoxLayout()
+        toolbar = QtWidgets.QHBoxLayout()
         toolbar.setContentsMargins(10, 10, 10, 10)
         
-        title_label = QLabel(title)
-        title_font = QFont()
+        title_label = QtWidgets.QLabel(title)
+        title_font = QtGui.QFont()
         title_font.setPointSize(12)
         title_font.setBold(True)
         title_label.setFont(title_font)
         toolbar.addWidget(title_label)
         toolbar.addStretch()
         
-        close_btn = QPushButton("Close")
+        close_btn = QtWidgets.QPushButton("Close")
         close_btn.setFixedWidth(100)
         close_btn.clicked.connect(self.close)
         close_btn.setStyleSheet("""
@@ -64,13 +60,13 @@ class PDFViewer(QDialog):
         
         # PDF Viewer
         if HAS_WEB_ENGINE:
-            self.viewer = QWebEngineView()
+            self.viewer = _QWebEngineView()
             layout.addWidget(self.viewer)
         else:
             # Fallback message
-            fallback_label = QLabel(
+            fallback_label = QtWidgets.QLabel(
                 "PDF Web Engine not available.\n"
-                "Install PyQtWebEngine: pip install PyQtWebEngine\n\n"
+                "Install Qt WebEngine support for your Qt binding.\n\n"
                 "Alternatively, install and use system PDF viewer."
             )
             fallback_label.setAlignment(Qt.AlignCenter)
@@ -82,11 +78,10 @@ class PDFViewer(QDialog):
         """Load PDF file"""
         if HAS_WEB_ENGINE:
             try:
-                from PyQt5.QtCore import QUrl
                 pdf_url = QUrl.fromLocalFile(self.file_path)
                 self.viewer.load(pdf_url)
             except Exception as e:
-                QMessageBox.warning(self, "Error", f"Failed to load PDF: {str(e)}")
+                QtWidgets.QMessageBox.warning(self, "Error", f"Failed to load PDF: {str(e)}")
         else:
             # Fall back to system viewer
             import os
@@ -103,4 +98,4 @@ class PDFViewer(QDialog):
                 
                 self.close()
             except Exception as e:
-                QMessageBox.warning(self, "Error", f"Failed to open PDF: {str(e)}")
+                QtWidgets.QMessageBox.warning(self, "Error", f"Failed to open PDF: {str(e)}")

@@ -2,22 +2,37 @@
 Records Table Window for MOA Tracking System
 Displays all records with search, filter, and action buttons
 """
-from PyQt5.QtWidgets import (
-    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QLabel, QLineEdit, QComboBox, QPushButton, QTableWidget,
-    QTableWidgetItem, QMessageBox, QHeaderView, QAbstractItemView
-)
-from PyQt5.QtCore import Qt, pyqtSignal, QSize
-from PyQt5.QtGui import QFont, QColor, QIcon, QBrush
+from qt_compat import QtCore, QtGui, QtWidgets, Signal
 from database import Database
 from models import Record
 from utils.file_handler import FileHandler
 
+Qt = QtCore.Qt
+QSize = QtCore.QSize
+QFont = QtGui.QFont
+QColor = QtGui.QColor
+QIcon = QtGui.QIcon
+QBrush = QtGui.QBrush
+
+QMainWindow = QtWidgets.QMainWindow
+QWidget = QtWidgets.QWidget
+QVBoxLayout = QtWidgets.QVBoxLayout
+QHBoxLayout = QtWidgets.QHBoxLayout
+QLabel = QtWidgets.QLabel
+QLineEdit = QtWidgets.QLineEdit
+QComboBox = QtWidgets.QComboBox
+QPushButton = QtWidgets.QPushButton
+QTableWidget = QtWidgets.QTableWidget
+QTableWidgetItem = QtWidgets.QTableWidgetItem
+QMessageBox = QtWidgets.QMessageBox
+QHeaderView = QtWidgets.QHeaderView
+QAbstractItemView = QtWidgets.QAbstractItemView
+
 class RecordsTableWindow(QMainWindow):
     """Window for displaying and managing records"""
     
-    edit_record_signa = pyqtSignal(int)  # Emit record ID when edit is requested
-    refresh_requested = pyqtSignal()
+    edit_record_signa = Signal(int)  # Emit record ID when edit is requested
+    refresh_requested = Signal()
     
     def __init__(self, db: Database):
         super().__init__()

@@ -7,15 +7,14 @@ import shutil
 from pathlib import Path
 from typing import Optional, Tuple
 
-# Base directories for file storage
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-UPLOADS_DIR = os.path.join(BASE_DIR, 'uploads')
-LO_UPLOADS_DIR = os.path.join(UPLOADS_DIR, 'lo')
-MOA_UPLOADS_DIR = os.path.join(UPLOADS_DIR, 'moa')
+from app_paths import ensure_data_dirs
 
-# Create directories if they don't exist
-os.makedirs(LO_UPLOADS_DIR, exist_ok=True)
-os.makedirs(MOA_UPLOADS_DIR, exist_ok=True)
+# Base directories for file storage (writable per-user dir by default)
+_dirs = ensure_data_dirs()
+DATA_DIR = str(_dirs["data_dir"])
+UPLOADS_DIR = str(_dirs["uploads_dir"])
+LO_UPLOADS_DIR = str(_dirs["lo_uploads_dir"])
+MOA_UPLOADS_DIR = str(_dirs["moa_uploads_dir"])
 
 ALLOWED_EXTENSIONS = {'.pdf'}
 
@@ -82,7 +81,7 @@ class FileHandler:
         if not relative_path:
             return None
         
-        abs_path = os.path.join(BASE_DIR, relative_path)
+        abs_path = os.path.join(DATA_DIR, relative_path)
         if os.path.exists(abs_path):
             return abs_path
         return None

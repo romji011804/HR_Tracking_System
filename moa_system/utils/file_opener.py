@@ -3,11 +3,12 @@ File and URL Opener Utility
 STRICT FILE vs LINK detection
 """
 import os
-from PyQt5.QtGui import QDesktopServices
-from PyQt5.QtCore import QUrl
+from qt_compat import QtGui, load_qurl
+from app_paths import ensure_data_dirs
 
-# Get the base directory of the application
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_dirs = ensure_data_dirs()
+DATA_DIR = str(_dirs["data_dir"])
+QUrl = load_qurl()
 
 
 def open_file(path_or_url: str, show_error_callback=None) -> bool:
@@ -41,11 +42,10 @@ def open_file(path_or_url: str, show_error_callback=None) -> bool:
         return False
     
     # Step 2: STRICT detection - check if file exists FIRST
-    # If path is relative, try to make it absolute from BASE_DIR
+    # If path is relative, try to make it absolute from DATA_DIR (uploads live there)
     check_path = path_or_url
     if not os.path.isabs(path_or_url):
-        # Try relative to BASE_DIR first (for uploads/)
-        check_path = os.path.join(BASE_DIR, path_or_url)
+        check_path = os.path.join(DATA_DIR, path_or_url)
     
     if os.path.exists(check_path):
         print(f"[DEBUG] File exists: {check_path} → Opening locally")
@@ -80,7 +80,7 @@ def _open_local_file(file_path: str, show_error_callback=None) -> bool:
         print(f"[DEBUG] Opening file: {abs_path}")
         
         # ONLY use fromLocalFile for local files
-        QDesktopServices.openUrl(QUrl.fromLocalFile(abs_path))
+        QtGui.QDesktopServices.openUrl(QUrl.fromLocalFile(abs_path))
         return True
     
     except Exception as e:
@@ -107,7 +107,7 @@ def _open_link(url: str, show_error_callback=None) -> bool:
         print(f"[DEBUG] Opening URL: {url}")
         
         # Open URL in browser
-        QDesktopServices.openUrl(QUrl(url))
+        QtGui.QDesktopServices.openUrl(QUrl(url))
         return True
     
     except Exception as e:

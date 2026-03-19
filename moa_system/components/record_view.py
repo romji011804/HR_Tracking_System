@@ -2,12 +2,7 @@
 Record View Component
 Displays detailed view of a single record in a card-based layout
 """
-from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, 
-    QScrollArea, QMessageBox
-)
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QFont, QCursor
+from qt_compat import QtCore, QtGui, QtWidgets, Signal
 import os
 from database import Database
 from models import Record
@@ -15,32 +10,33 @@ from utils.file_handler import FileHandler
 from utils.file_opener import open_file  # Renamed from open_file_or_url
 from ui.edit_record import EditRecordWindow
 
-class RecordViewComponent(QWidget):
+class RecordViewComponent(QtWidgets.QWidget):
     """Component for viewing a single record with detailed information"""
     
-    back_clicked = pyqtSignal()
-    record_updated = pyqtSignal(int)  # Emitted when record is updated
+    back_clicked = Signal()
+    record_updated = Signal(int)  # Emitted when record is updated
     
-    def __init__(self, record_id: int, db: Database, parent=None):
+    def __init__(self, record_id: int, db: Database, parent=None, *, show_back: bool = True):
         super().__init__(parent)
         self.record_id = record_id
         self.db = db
         self.file_handler = FileHandler()
         self.record = None
+        self.show_back = show_back
         self.init_ui()
         self.load_record()
     
     def init_ui(self):
         """Initialize record view UI"""
-        main_layout = QVBoxLayout()
+        main_layout = QtWidgets.QVBoxLayout()
         main_layout.setContentsMargins(20, 20, 20, 20)
         main_layout.setSpacing(15)
         
         # Header with back button
-        header_layout = QHBoxLayout()
+        header_layout = QtWidgets.QHBoxLayout()
         
-        self.title_label = QLabel()
-        title_font = QFont()
+        self.title_label = QtWidgets.QLabel()
+        title_font = QtGui.QFont()
         title_font.setPointSize(18)
         title_font.setBold(True)
         self.title_label.setFont(title_font)
@@ -49,28 +45,29 @@ class RecordViewComponent(QWidget):
         header_layout.addWidget(self.title_label)
         header_layout.addStretch()
         
-        back_btn = QPushButton("← Back")
-        back_btn.setFixedWidth(100)
-        back_btn.setFixedHeight(35)
-        back_btn.clicked.connect(self.back_clicked.emit)
-        back_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #6366f1;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                font-weight: 500;
-            }
-            QPushButton:hover {
-                background-color: #4f46e5;
-            }
-        """)
-        header_layout.addWidget(back_btn)
+        if self.show_back:
+            back_btn = QtWidgets.QPushButton("← Back")
+            back_btn.setFixedWidth(100)
+            back_btn.setFixedHeight(35)
+            back_btn.clicked.connect(self.back_clicked.emit)
+            back_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #6366f1;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    font-weight: 500;
+                }
+                QPushButton:hover {
+                    background-color: #4f46e5;
+                }
+            """)
+            header_layout.addWidget(back_btn)
         
         main_layout.addLayout(header_layout)
         
         # Scroll area for content
-        scroll = QScrollArea()
+        scroll = QtWidgets.QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setStyleSheet("""
             QScrollArea {
@@ -79,13 +76,13 @@ class RecordViewComponent(QWidget):
             }
         """)
         
-        content_widget = QWidget()
-        content_layout = QVBoxLayout(content_widget)
+        content_widget = QtWidgets.QWidget()
+        content_layout = QtWidgets.QVBoxLayout(content_widget)
         content_layout.setSpacing(15)
         content_layout.setContentsMargins(0, 0, 0, 0)
         
         # Fields container
-        self.fields_layout = QVBoxLayout()
+        self.fields_layout = QtWidgets.QVBoxLayout()
         self.fields_layout.setSpacing(12)
         content_layout.addLayout(self.fields_layout)
         content_layout.addStretch()
@@ -94,10 +91,10 @@ class RecordViewComponent(QWidget):
         main_layout.addWidget(scroll)
         
         # Action buttons
-        button_layout = QHBoxLayout()
+        button_layout = QtWidgets.QHBoxLayout()
         button_layout.addStretch()
         
-        self.edit_btn = QPushButton("✏️ Edit Record")
+        self.edit_btn = QtWidgets.QPushButton("✏️ Edit Record")
         self.edit_btn.setFixedWidth(140)
         self.edit_btn.setFixedHeight(40)
         self.edit_btn.setStyleSheet("""
@@ -116,7 +113,7 @@ class RecordViewComponent(QWidget):
         self.edit_btn.clicked.connect(self.on_edit_clicked)
         button_layout.addWidget(self.edit_btn)
         
-        self.delete_btn = QPushButton("🗑️ Delete Record")
+        self.delete_btn = QtWidgets.QPushButton("🗑️ Delete Record")
         self.delete_btn.setFixedWidth(140)
         self.delete_btn.setFixedHeight(40)
         self.delete_btn.setStyleSheet("""
@@ -152,9 +149,9 @@ class RecordViewComponent(QWidget):
                 self.record = Record.from_dict(record_dict)
                 self.display_record()
             else:
-                QMessageBox.warning(self, "Error", "Record not found")
+                QtWidgets.QMessageBox.warning(self, "Error", "Record not found")
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"Failed to load record: {e}")
+            QtWidgets.QMessageBox.critical(self, "Error", f"Failed to load record: {e}")
     
     def display_record(self):
         """Display record fields"""
@@ -189,31 +186,31 @@ class RecordViewComponent(QWidget):
                 field_widget = self.create_field_widget(label_text, icon, value)
             self.fields_layout.addWidget(field_widget)
     
-    def create_field_widget(self, label: str, icon: str, value: str) -> QWidget:
+    def create_field_widget(self, label: str, icon: str, value: str) -> QtWidgets.QWidget:
         """Create a field display widget"""
-        container = QWidget()
-        layout = QHBoxLayout(container)
+        container = QtWidgets.QWidget()
+        layout = QtWidgets.QHBoxLayout(container)
         layout.setContentsMargins(15, 12, 15, 12)
         layout.setSpacing(10)
         
         # Icon and label
-        icon_label = QLabel(icon)
+        icon_label = QtWidgets.QLabel(icon)
         icon_label.setStyleSheet("font-size: 16px;")
         icon_label.setFixedWidth(30)
         layout.addWidget(icon_label)
         
-        text_layout = QVBoxLayout()
+        text_layout = QtWidgets.QVBoxLayout()
         text_layout.setSpacing(3)
         
-        label_widget = QLabel(label)
-        label_font = QFont()
+        label_widget = QtWidgets.QLabel(label)
+        label_font = QtGui.QFont()
         label_font.setPointSize(9)
         label_widget.setFont(label_font)
         label_widget.setStyleSheet("color: #666666; font-weight: 500;")
         text_layout.addWidget(label_widget)
         
-        value_widget = QLabel(value)
-        value_font = QFont()
+        value_widget = QtWidgets.QLabel(value)
+        value_font = QtGui.QFont()
         value_font.setPointSize(11)
         value_widget.setFont(value_font)
         value_widget.setStyleSheet("color: #1a1a1a; font-weight: 500;")
@@ -233,35 +230,35 @@ class RecordViewComponent(QWidget):
         
         return container
     
-    def create_clickable_field_widget(self, label: str, icon: str, value: str) -> QWidget:
+    def create_clickable_field_widget(self, label: str, icon: str, value: str) -> QtWidgets.QWidget:
         """Create a clickable field widget (for MOA and LO)"""
         # Check if value is available
         is_available = value and value != "No file available"
         
-        container = QWidget()
-        layout = QHBoxLayout(container)
+        container = QtWidgets.QWidget()
+        layout = QtWidgets.QHBoxLayout(container)
         layout.setContentsMargins(15, 12, 15, 12)
         layout.setSpacing(10)
         
         # Icon and label
-        icon_label = QLabel(icon)
+        icon_label = QtWidgets.QLabel(icon)
         icon_label.setStyleSheet("font-size: 16px;")
         icon_label.setFixedWidth(30)
         layout.addWidget(icon_label)
         
-        text_layout = QVBoxLayout()
+        text_layout = QtWidgets.QVBoxLayout()
         text_layout.setSpacing(3)
         
-        label_widget = QLabel(label)
-        label_font = QFont()
+        label_widget = QtWidgets.QLabel(label)
+        label_font = QtGui.QFont()
         label_font.setPointSize(9)
         label_widget.setFont(label_font)
         label_widget.setStyleSheet("color: #666666; font-weight: 500;")
         text_layout.addWidget(label_widget)
         
         # Create clickable value widget
-        value_widget = QLabel(value)
-        value_font = QFont()
+        value_widget = QtWidgets.QLabel(value)
+        value_font = QtGui.QFont()
         value_font.setPointSize(11)
         value_font.setUnderline(True)  # Underline to show it's clickable
         value_widget.setFont(value_font)
@@ -277,7 +274,7 @@ class RecordViewComponent(QWidget):
                     text-decoration: underline;
                 }}
             """)
-            value_widget.setCursor(QCursor(Qt.PointingHandCursor))
+            value_widget.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
             
             # Make it clickable
             value_widget.mousePressEvent = lambda event: self.on_file_click(value, label)
@@ -326,7 +323,7 @@ class RecordViewComponent(QWidget):
     
     def show_file_error(self, title: str, message: str):
         """Show error message for file operations"""
-        QMessageBox.warning(self, title, message)
+        QtWidgets.QMessageBox.warning(self, title, message)
     
     def on_edit_clicked(self):
         """Handle edit button click"""
@@ -338,7 +335,7 @@ class RecordViewComponent(QWidget):
             # Keep a reference to prevent garbage collection
             self._edit_window = window
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"Failed to open edit window: {e}")
+            QtWidgets.QMessageBox.critical(self, "Error", f"Failed to open edit window: {e}")
 
     def on_record_updated(self, record_id: int):
         """Handle record updated from edit window"""
@@ -349,14 +346,14 @@ class RecordViewComponent(QWidget):
     
     def on_delete_clicked(self):
         """Handle delete button click"""
-        reply = QMessageBox.question(
+        reply = QtWidgets.QMessageBox.question(
             self, 
             "Delete Record", 
             f"Are you sure you want to delete {self.record.control_number}?",
-            QMessageBox.Yes | QMessageBox.No
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No
         )
         
-        if reply == QMessageBox.Yes:
+        if reply == QtWidgets.QMessageBox.Yes:
             try:
                 # Delete files
                 if self.record.lo_file:
@@ -366,7 +363,7 @@ class RecordViewComponent(QWidget):
                 
                 # Delete from database
                 self.db.delete_record(self.record.id)
-                QMessageBox.information(self, "Success", "Record deleted successfully")
+                QtWidgets.QMessageBox.information(self, "Success", "Record deleted successfully")
                 self.back_clicked.emit()
             except Exception as e:
-                QMessageBox.critical(self, "Error", f"Failed to delete record: {e}")
+                QtWidgets.QMessageBox.critical(self, "Error", f"Failed to delete record: {e}")

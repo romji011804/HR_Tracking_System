@@ -2,18 +2,29 @@
 Dashboard Page
 Displays statistics and recent records
 """
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QGridLayout, QTableWidgetItem, QStackedWidget
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QFont, QColor
+from qt_compat import QtCore, QtGui, QtWidgets, Signal
 from components.card_widget import CardWidget
 from components.table_widget import TableContainer
 from components.record_view import RecordViewComponent
 from database import Database
 
+Qt = QtCore.Qt
+QFont = QtGui.QFont
+QColor = QtGui.QColor
+
+QWidget = QtWidgets.QWidget
+QVBoxLayout = QtWidgets.QVBoxLayout
+QHBoxLayout = QtWidgets.QHBoxLayout
+QLabel = QtWidgets.QLabel
+QGridLayout = QtWidgets.QGridLayout
+QTableWidgetItem = QtWidgets.QTableWidgetItem
+QStackedWidget = QtWidgets.QStackedWidget
+
+
 class DashboardPage(QWidget):
     """Dashboard page with statistics and recent records"""
     
-    view_records_requested = pyqtSignal()  # Signal to navigate to View Records page
+    view_records_requested = Signal()  # Signal to navigate to View Records page
     
     def __init__(self, db: Database):
         super().__init__()

@@ -2,23 +2,40 @@
 Add Record Page
 Form for creating new MOA and Legal Opinion records with 2-column layout
 """
-from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QGridLayout,
-    QLabel, QLineEdit, QDateEdit, QComboBox, QCheckBox, QPushButton,
-    QFileDialog, QMessageBox, QSpinBox, QScrollArea,  QRadioButton, QButtonGroup
-)
-from PyQt5.QtCore import Qt, QDate, pyqtSignal
-from PyQt5.QtGui import QFont
+from qt_compat import QtCore, QtGui, QtWidgets, Signal
 from database import Database
 from utils.file_handler import FileHandler
 from utils.control_number_generator import generate_control_number
 from components.recent_input_widget import RecentInputComboBox
 import sqlite3
 
+Qt = QtCore.Qt
+QDate = QtCore.QDate
+QFont = QtGui.QFont
+
+QWidget = QtWidgets.QWidget
+QVBoxLayout = QtWidgets.QVBoxLayout
+QHBoxLayout = QtWidgets.QHBoxLayout
+QGroupBox = QtWidgets.QGroupBox
+QGridLayout = QtWidgets.QGridLayout
+QLabel = QtWidgets.QLabel
+QLineEdit = QtWidgets.QLineEdit
+QDateEdit = QtWidgets.QDateEdit
+QComboBox = QtWidgets.QComboBox
+QCheckBox = QtWidgets.QCheckBox
+QPushButton = QtWidgets.QPushButton
+QFileDialog = QtWidgets.QFileDialog
+QMessageBox = QtWidgets.QMessageBox
+QSpinBox = QtWidgets.QSpinBox
+QScrollArea = QtWidgets.QScrollArea
+QRadioButton = QtWidgets.QRadioButton
+QButtonGroup = QtWidgets.QButtonGroup
+
+
 class AddRecordPage(QWidget):
     """Page for adding new records with 2-column layout"""
     
-    record_added = pyqtSignal(int)
+    record_added = Signal(int)
     
     def __init__(self, db: Database, record_id: int = None):
         super().__init__()

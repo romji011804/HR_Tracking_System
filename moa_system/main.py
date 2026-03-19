@@ -4,9 +4,7 @@ Refactored with sidebar navigation and modular pages
 """
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
+from qt_compat import QtCore, QtGui, QtWidgets, qapplication_exec, QT_API
 from database import Database
 from components.sidebar import Sidebar
 from pages.dashboard import DashboardPage
@@ -23,7 +21,7 @@ except Exception:
     LightPalette = None
     DarkPalette = None
 
-class MainWindow(QMainWindow):
+class MainWindow(QtWidgets.QMainWindow):
     """Main application window with sidebar and pages"""
     
     def __init__(self):
@@ -40,14 +38,14 @@ class MainWindow(QMainWindow):
         base_dir = os.path.dirname(os.path.abspath(__file__))
         icon_path = os.path.join(base_dir, "assets", "app_icon.png")
         if os.path.exists(icon_path):
-            self.setWindowIcon(QIcon(icon_path))
+            self.setWindowIcon(QtGui.QIcon(icon_path))
         
         # Create central widget
-        central_widget = QWidget()
+        central_widget = QtWidgets.QWidget()
         self.setCentralWidget(central_widget)
         
         # Main layout
-        main_layout = QHBoxLayout(central_widget)
+        main_layout = QtWidgets.QHBoxLayout(central_widget)
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
         
@@ -60,8 +58,8 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(self.sidebar)
         
         # Page container
-        self.page_container = QWidget()
-        self.page_layout = QHBoxLayout(self.page_container)
+        self.page_container = QtWidgets.QWidget()
+        self.page_layout = QtWidgets.QHBoxLayout(self.page_container)
         self.page_layout.setContentsMargins(0, 0, 0, 0)
         self.page_layout.setSpacing(0)
         
@@ -83,7 +81,7 @@ class MainWindow(QMainWindow):
         self.apply_theme(self.theme_manager.get_theme())
         self.show_dashboard()
     
-    def show_page(self, page: QWidget):
+    def show_page(self, page: QtWidgets.QWidget):
         """Show a page in the container"""
         # Remove current page
         if self.current_page:
@@ -122,7 +120,7 @@ class MainWindow(QMainWindow):
         # Prefer QDarkStyle (modern, consistent widgets) if installed
         if qdarkstyle is not None and LightPalette is not None and DarkPalette is not None:
             palette = LightPalette() if theme == "light" else DarkPalette()
-            base = qdarkstyle.load_stylesheet(qt_api="pyqt5", palette=palette)
+            base = qdarkstyle.load_stylesheet(qt_api=QT_API, palette=palette)
             # Remove checkbox/indicator decorations from dropdown lists (combobox popup)
             override = """
                 QComboBox QAbstractItemView::indicator,
@@ -153,7 +151,7 @@ class MainWindow(QMainWindow):
                     margin-left: 0px;
                 }
             """
-            QApplication.instance().setStyleSheet(base + override)
+            QtWidgets.QApplication.instance().setStyleSheet(base + override)
             return
 
         # Fallback to built-in stylesheet bundle
@@ -167,11 +165,11 @@ class MainWindow(QMainWindow):
             tm.get_stylesheet("table"),
             tm.get_stylesheet("label"),
         ])
-        QApplication.instance().setStyleSheet(app_stylesheet)
+        QtWidgets.QApplication.instance().setStyleSheet(app_stylesheet)
 
 def main():
     """Main application entry point"""
-    app = QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     
     # Apply style
     app.setStyle('Fusion')
@@ -180,12 +178,12 @@ def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     icon_path = os.path.join(base_dir, "assets", "app_icon.png")
     if os.path.exists(icon_path):
-        app.setWindowIcon(QIcon(icon_path))
+        app.setWindowIcon(QtGui.QIcon(icon_path))
 
     window = MainWindow()
     window.show()
     
-    sys.exit(app.exec_())
+    sys.exit(qapplication_exec(app))
 
 if __name__ == '__main__':
     main()

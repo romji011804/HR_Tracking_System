@@ -2,14 +2,24 @@
 Dashboard Window for MOA Tracking System
 Displays summary statistics
 """
-from PyQt5.QtWidgets import (
-    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
-    QLabel, QPushButton, QMessageBox
-)
-from PyQt5.QtCore import Qt, QSize, pyqtSignal
-from PyQt5.QtGui import QFont, QColor, QBrush
+from qt_compat import QtCore, QtGui, QtWidgets, Signal
 from database import Database
 from models import DashboardStats
+
+Qt = QtCore.Qt
+QSize = QtCore.QSize
+QFont = QtGui.QFont
+QColor = QtGui.QColor
+QBrush = QtGui.QBrush
+
+QMainWindow = QtWidgets.QMainWindow
+QWidget = QtWidgets.QWidget
+QVBoxLayout = QtWidgets.QVBoxLayout
+QHBoxLayout = QtWidgets.QHBoxLayout
+QGridLayout = QtWidgets.QGridLayout
+QLabel = QtWidgets.QLabel
+QPushButton = QtWidgets.QPushButton
+QMessageBox = QtWidgets.QMessageBox
 
 class StatisticCard(QWidget):
     """Custom widget for displaying statistics"""
@@ -61,7 +71,7 @@ class StatisticCard(QWidget):
 class DashboardWindow(QMainWindow):
     """Dashboard window displaying system statistics"""
     
-    refresh_requested = pyqtSignal()
+    refresh_requested = Signal()
     
     def __init__(self, db: Database):
         super().__init__()

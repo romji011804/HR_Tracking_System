@@ -2,20 +2,15 @@
 Table Container Component
 Styled container for displaying records in a table
 """
-from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QTableWidget, QTableWidgetItem, QLineEdit, QComboBox
-)
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QFont, QColor, QBrush
+from qt_compat import QtCore, QtGui, QtWidgets, Signal
 
-class TableContainer(QWidget):
+class TableContainer(QtWidgets.QWidget):
     """Container for displaying records in a styled table"""
     
     # Signals
-    search_changed = pyqtSignal(str)
-    filter_changed = pyqtSignal(str)
-    view_all_clicked = pyqtSignal()
+    search_changed = Signal(str)
+    filter_changed = Signal(str)
+    view_all_clicked = Signal()
     
     def __init__(self, title: str = "Records", show_filters: bool = True):
         super().__init__()
@@ -26,16 +21,16 @@ class TableContainer(QWidget):
     
     def init_ui(self):
         """Initialize table container UI"""
-        main_layout = QVBoxLayout()
+        main_layout = QtWidgets.QVBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(15)
         
         # Header section with title and button
-        header_layout = QHBoxLayout()
+        header_layout = QtWidgets.QHBoxLayout()
         header_layout.setContentsMargins(20, 15, 20, 10)
         
-        title_label = QLabel(self.title_text)
-        title_font = QFont()
+        title_label = QtWidgets.QLabel(self.title_text)
+        title_font = QtGui.QFont()
         title_font.setPointSize(14)
         title_font.setBold(True)
         title_label.setFont(title_font)
@@ -43,7 +38,7 @@ class TableContainer(QWidget):
         header_layout.addWidget(title_label)
         header_layout.addStretch()
         
-        self.view_all_btn = QPushButton("View All Records")
+        self.view_all_btn = QtWidgets.QPushButton("View All Records")
         self.view_all_btn.setFixedWidth(140)
         self.view_all_btn.setFixedHeight(35)
         self.view_all_btn.setStyleSheet("""
@@ -66,7 +61,7 @@ class TableContainer(QWidget):
         header_layout.addWidget(self.view_all_btn)
         
         # Container for header and table
-        container = QWidget()
+        container = QtWidgets.QWidget()
         container.setStyleSheet("""
             QWidget {
                 background-color: white;
@@ -74,7 +69,7 @@ class TableContainer(QWidget):
                 border-radius: 8px;
             }
         """)
-        container_layout = QVBoxLayout()
+        container_layout = QtWidgets.QVBoxLayout()
         container_layout.setContentsMargins(0, 0, 0, 0)
         container_layout.setSpacing(0)
         
@@ -83,16 +78,16 @@ class TableContainer(QWidget):
         
         # Filter section (if enabled)
         if self.show_filters:
-            filter_layout = QHBoxLayout()
+            filter_layout = QtWidgets.QHBoxLayout()
             filter_layout.setContentsMargins(20, 10, 20, 15)
             filter_layout.setSpacing(10)
             
             # Search box
-            search_label = QLabel("Search:")
+            search_label = QtWidgets.QLabel("Search:")
             search_label.setStyleSheet("color: #666; font-size: 11px; font-weight: 500;")
             filter_layout.addWidget(search_label)
             
-            self.search_input = QLineEdit()
+            self.search_input = QtWidgets.QLineEdit()
             self.search_input.setPlaceholderText("Search by Control #, School, or Course...")
             self.search_input.setFixedHeight(35)
             self.search_input.setStyleSheet("""
@@ -113,11 +108,11 @@ class TableContainer(QWidget):
             filter_layout.addWidget(self.search_input, 1)
             
             # Filter dropdown
-            filter_label = QLabel("Filter:")
+            filter_label = QtWidgets.QLabel("Filter:")
             filter_label.setStyleSheet("color: #666; font-size: 11px; font-weight: 500;")
             filter_layout.addWidget(filter_label)
             
-            self.filter_combo = QComboBox()
+            self.filter_combo = QtWidgets.QComboBox()
             self.filter_combo.addItems(["All", "Ongoing", "Completed", "Missing LO", "Missing MOA"])
             self.filter_combo.setFixedWidth(150)
             self.filter_combo.setFixedHeight(35)
@@ -143,7 +138,7 @@ class TableContainer(QWidget):
             container_layout.addLayout(filter_layout)
         
         # Table
-        self.table = QTableWidget()
+        self.table = QtWidgets.QTableWidget()
         self.table.setColumnCount(0)
         self.table.setRowCount(0)
         self.table.setStyleSheet("""
@@ -190,8 +185,8 @@ class TableContainer(QWidget):
         self.table.insertRow(row_position)
         
         for col, value in enumerate(data):
-            item = QTableWidgetItem(str(value))
-            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+            item = QtWidgets.QTableWidgetItem(str(value))
+            item.setFlags(item.flags() & ~QtCore.Qt.ItemIsEditable)
             self.table.setItem(row_position, col, item)
         
         return row_position
